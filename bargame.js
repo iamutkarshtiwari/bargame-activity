@@ -26,12 +26,14 @@
 var boardPaused = 0
 var numberBalls = [[1, 4], [2, 6], [3, 6]]
 var boardSize = [15, 19, 29]
+var sampleBallsNo = [4, 6, 6]
 var tuxPositionFactor = [1.05, 1.8, 1.05]
+var ballSizeFactor = [0, 4, 4]
 var elementSizeFactor = [0, 4, 7]
 var moveCount = -1
-var level = 1
+var level = 3
 var maxlevel = 4
-var sublevel = 3
+var sublevel = 1
 var numberOfSublevel = 3
 var bool = false
 var listWin = false

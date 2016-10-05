@@ -39,7 +39,7 @@ Item {
 
     Image {
         id: backgroundImage
-        source: "resources/bargame/school_bg1.jpg"
+        source: "resources/bargame/school_bg" + Activity.level + ".jpg"
         sourceSize.height: rootWindow.height
         sourceSize.width: rootWindow.width
         //fillMode: Image.Stretch
@@ -76,7 +76,7 @@ Item {
     // Tux image
     Image {
         id: tux
-        source: "resources/bargame/tux.png"
+        source: "resources/bargame/tux" + Activity.level + ".png"
         height: rootWindow.height / 3.8
         width: rootWindow.width / 8
         y: rootWindow.height - rootWindow.height / 1.8
@@ -86,17 +86,17 @@ Item {
     // Upper blue balls sample
     Grid {
         id: blueBalls
-        columns: 4
+        columns: Activity.sampleBallsNo[Activity.sublevel - 1]
         rows: 1
         x: rootWindow.width / 5
         y: rootWindow.height / 1.7
         Repeater {
-            model: 4
+            model: blueBalls.columns
             Image {
                 id: blueBall
                 source: "resources/bargame/blue_ball.png"
-                height: rootWindow.height / 9
-                width: rootWindow.width / 15
+                height: rootWindow.height / (8 + Activity.ballSizeFactor[Activity.sublevel - 1])
+                width: rootWindow.width / (15 + Activity.ballSizeFactor[Activity.sublevel - 1])
             }
 
         }
@@ -107,14 +107,14 @@ Item {
         x: rootWindow.width / 5
         y: rootWindow.height / 1.2
         rows: 1
-        columns: 4
+        columns: Activity.sampleBallsNo[Activity.sublevel - 1]
         Repeater {
-            model: 4
+            model: greenBalls.columns
             Image {
                 id: greenBall
                 source: "resources/bargame/green_ball.png"
-                height: rootWindow.height / 9
-                width: rootWindow.width / 15
+                height: rootWindow.height / (8 + Activity.ballSizeFactor[Activity.sublevel - 1])
+                width: rootWindow.width / (15 + Activity.ballSizeFactor[Activity.sublevel - 1])
             }
 
         }
@@ -130,7 +130,6 @@ Item {
             columns: 2
             rows: 1
             columnSpacing: rootWindow.width / 3.1
-
             x: rootWindow.width / 2.4
             y: rootWindow.height / 1.5
             Repeater {
@@ -234,19 +233,19 @@ Item {
             onClicked: {
 
                 Activity.reSetup();
-//                for(var i = 0; i <  Activity.noOfBalls; i++) {
-//                    Activity.moveCount++;
+                //                for(var i = 0; i <  Activity.noOfBalls; i++) {
+                //                    Activity.moveCount++;
 
-//                    if (Activity.moveCount <= (Activity.boardSize[Activity.sublevel-1] - 1)) {
-//                        greenAnswerBallsPlacement.children[Activity.moveCount].opacity = 1.0;
-//                    } else if (Activity.moveCount >= (Activity.boardSize[Activity.sublevel-1] - 1)) {
-//                        Activity.reSetup();
-//                        break;
-//                    }
-//                }
-//                Activity.noOfBalls = 1;
-//                numberOfBalls.text = 1;
-//                Activity.machinePlay();
+                //                    if (Activity.moveCount <= (Activity.boardSize[Activity.sublevel-1] - 1)) {
+                //                        greenAnswerBallsPlacement.children[Activity.moveCount].opacity = 1.0;
+                //                    } else if (Activity.moveCount >= (Activity.boardSize[Activity.sublevel-1] - 1)) {
+                //                        Activity.reSetup();
+                //                        break;
+                //                    }
+                //                }
+                //                Activity.noOfBalls = 1;
+                //                numberOfBalls.text = 1;
+                //                Activity.machinePlay();
 
             }
         }
