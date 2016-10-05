@@ -26,14 +26,15 @@
 var boardPaused = 0
 var numberBalls = [[1, 4], [2, 6], [3, 6]]
 var boardSize = [15, 19, 29]
-var moveCount = 0
+var tuxPositionFactor = [1.05, 1.8, 1.05]
+var elementSizeFactor = [0, 4, 7]
+var moveCount = -1
 var level = 1
 var maxlevel = 4
-var sublevel = 1
+var sublevel = 3
 var numberOfSublevel = 3
 var bool = false
 var listWin = false
-
 var currentLevel = 0
 var numberOfLevel = 4
 var items
@@ -69,7 +70,6 @@ function previousLevel() {
 function calculateWinPlaces() {
     var winners = [];
     var winnersList = [];
-
     var min = numberBalls[sublevel - 1][0];
     var max = numberBalls[sublevel - 1][1];
     var period = (min + max);
@@ -79,13 +79,10 @@ function calculateWinPlaces() {
     }
 
     for (var x = 0; x < (boardSize[sublevel - 1]); x++ ) {
-
         if (winnersList.indexOf((x + 1) % period) >= 0) {
-
             winners.push(x);
         }
     }
-
 
     var level_win = (level - 1) * min;
 
@@ -95,12 +92,8 @@ function calculateWinPlaces() {
         winners = winners.slice(-level_win);
     }
 
-
-
     listWin =  winners;
 }
-
-
 
 function machinePlay() {
 
@@ -123,16 +116,37 @@ function machinePlay() {
             playable.push(x);
         }
     }
-
     if (playable.length != 0) {
-        var value = playable[Math.floor(Math.random()*items.length)];
+        var value = playable[Math.floor(Math.random()*playable.length)];
     } else {
-        var value = randomNumber(numberBalls[sublevel - 1][0], numberBalls[sublevel - 1][1] + 1);
+        var value = randomNumber(numberBalls[sublevel - 1][0], numberBalls[sublevel - 1][1]);
     }
 
+    // Updates the game scene of level finish
     for ( var x = 1; x < value + 1; x++) {
-        items.blueAnswerBallsPlacement.children[moveCount++].opacity = 1.0;
+        moveCount++;
+        if (moveCount <= (boardSize[sublevel - 1] - 1)) {
+            items.blueAnswerBallsPlacement.children[moveCount].opacity = 1.0;
+        } else if (moveCount >= (boardSize[sublevel-1] - 1)) {
+            reSetup();
+            break;
+        }
+
+       // console.log(moveCount);
     }
+}
+
+function reSetup() {
+    //sublevel ++;
+
+
+    //if (sublevel == 2) {
+    items.startCase.model = boardSize[sublevel - 1] - 1;
+//    items.greenCase.height = items.rootWindow.height / 12
+//    items.greenCase.width = items.rootWindow.width / 18
+
+
+    //}
 
 
 }

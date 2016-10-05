@@ -37,10 +37,6 @@ Item {
     height: Screen.height
     focus: true
 
-    property int board_paused: 0
-    property var numberBalls: [[1, 4], [2, 6], [3, 6]]
-    property var boardSize: [15, 19, 29]
-
     Image {
         id: backgroundImage
         source: "resources/bargame/school_bg1.jpg"
@@ -52,35 +48,29 @@ Item {
 
     // Add here the QML items you need to access in javascript
     QtObject {
-            id: items
-            property alias blueAnswerBallsPlacement: blueAnswerBallsPlacement
-//            property string name
-//            property int size
-//            property varianattributes
-        }
-//        property var dataset : {
-//            "helicopter": qsTr("\n   Click on \n the helicopter \n and let \n tux jump"),
-//            "Minitux": qsTr("\n  Click on \n tux open \n the parachute"),
-//            "parachute": qsTr("\n use up \n and down \n arrow key \n to regulate")
+        id: items
+        property Item boxModel: boxModel
+        property Item rootWindow: rootWindow
+        property alias boxes: boxes
+        property alias blueAnswerBallsPlacement: blueAnswerBallsPlacement
+        property alias answerBalls: answerBalls
+        property alias startCase: startCase
+        property alias lastCase: lastCase
+        property alias startMask: startMask
+        property alias lastMask: lastMask
+        //        property var dataset : {
+        //            "helicopter": qsTr("\n   Click on \n the helicopter \n and let \n tux jump"),
+        //            "Minitux": qsTr("\n  Click on \n tux open \n the parachute"),
+        //            "parachute": qsTr("\n use up \n and down \n arrow key \n to regulate")
 
-
-
-    //            IntroMessage {
-    //                id:message
-    //                onIntroDone: {
-    //                    Activity.start(items)
-    //                }
-    //            }
+    }
 
 
     Component.onCompleted: {
-            Activity.start(items)
+        Activity.start(items)
 
-            Activity.calculateWinPlaces();
-        }
-
-
-
+        Activity.calculateWinPlaces();
+    }
 
 
     // Tux image
@@ -90,10 +80,10 @@ Item {
         height: rootWindow.height / 3.8
         width: rootWindow.width / 8
         y: rootWindow.height - rootWindow.height / 1.8
-        x: rootWindow.width - rootWindow.width / 1.05
+        x: rootWindow.width - rootWindow.width / Activity.tuxPositionFactor[Activity.sublevel - 1]
     }
 
-    // Upper blue balls collection
+    // Upper blue balls sample
     Grid {
         id: blueBalls
         columns: 4
@@ -111,59 +101,7 @@ Item {
 
         }
     }
-
-    // Number grid
-    Grid {
-        id: numberGrid
-        columns: 2
-        rows: 1
-        columnSpacing: rootWindow.width / 3.1
-
-
-        x: rootWindow.width / 2.4
-        y: rootWindow.height / 1.5
-        Repeater {
-            model: 2
-            Text {
-                id: number
-                text: (index + 1) * 5
-                font.pixelSize: rootWindow.height / 25
-                font.bold: true
-
-            }
-        }
-
-    }
-
-    // The empty boxes grid
-    Grid {
-        id: boxes
-        rows: 1
-        columns: Activity.boardSize[0]
-        x: 0
-        y: rootWindow.height / 1.4
-        Repeater {
-            model: 14
-            Image {
-                id: greenCases
-                source:"resources/bargame/case.png"
-                height: rootWindow.height / 9
-                width: rootWindow.width / 15
-            }
-
-        }
-        Repeater {
-            model: 1
-            Image {
-                id: lastCase
-                source:"resources/bargame/case_last.png"
-                height: rootWindow.height / 9
-                width: rootWindow.width / 15
-            }
-        }
-    }
-
-    // Lower green balls collection
+    // Lower green balls sample
     Grid {
         id: greenBalls
         x: rootWindow.width / 5
@@ -180,6 +118,93 @@ Item {
             }
 
         }
+    }
+
+    // Box row
+    Item {
+        id: boxModel
+
+        // Number grid
+        Grid {
+            id: numberGrid
+            columns: 2
+            rows: 1
+            columnSpacing: rootWindow.width / 3.1
+
+            x: rootWindow.width / 2.4
+            y: rootWindow.height / 1.5
+            Repeater {
+                id: numberList
+                model: 2
+                Text {
+                    id: number
+                    text: (index + 1) * 5
+                    font.pixelSize: rootWindow.height / 25
+                    font.bold: true
+                }
+            }
+        }
+
+        // The empty boxes grid
+        Grid {
+            id: boxes
+            rows: 1
+            columns: Activity.boardSize[Activity.sublevel-1]
+            x: 0
+            y: rootWindow.height / 1.4
+            Repeater {
+                id: startCase
+                model: Activity.boardSize[Activity.sublevel-1] - 1
+                Image {
+                    id: greenCase
+                    source:"resources/bargame/case.png"
+                    height: rootWindow.height / (9 + (Activity.sublevel - 1) * Activity.elementSizeFactor[Activity.sublevel - 1])
+                    width: rootWindow.width / (15 + (Activity.sublevel - 1) * Activity.elementSizeFactor[Activity.sublevel - 1])
+                    visible: true
+                }
+            }
+            Repeater {
+                id: lastCase
+                model: 1
+                Image {
+                    id: redCase
+                    source:"resources/bargame/case_last.png"
+                    height: rootWindow.height / (9 + (Activity.sublevel - 1) * Activity.elementSizeFactor[Activity.sublevel - 1])
+                    width: rootWindow.width / (15 + (Activity.sublevel - 1) * Activity.elementSizeFactor[Activity.sublevel - 1])
+                    visible: true
+                }
+            }
+        }
+
+        // Masks
+        Grid {
+            id: masks
+            x: rootWindow.width / 2000
+            y: rootWindow.height / 1.4
+            rows: 1
+            columns: Activity.boardSize[Activity.sublevel-1]
+            Repeater {
+                id: startMask
+                model: Activity.boardSize[Activity.sublevel-1] - 1
+                Image {
+                    id: greenMask
+                    source: "resources/bargame/mask.png"
+                    height: rootWindow.height / (9 + (Activity.sublevel - 1) * Activity.elementSizeFactor[Activity.sublevel - 1])
+                    width: rootWindow.width / (15 + (Activity.sublevel - 1) * Activity.elementSizeFactor[Activity.sublevel - 1])
+                }
+            }
+            Repeater {
+                id: lastMask
+                model: 1
+                Image {
+                    id: redMask
+                    source: "resources/bargame/mask_last.png"
+                    height: rootWindow.height / (9 + (Activity.sublevel - 1) * Activity.elementSizeFactor[Activity.sublevel - 1])
+                    width: rootWindow.width / (15 + (Activity.sublevel - 1) * Activity.elementSizeFactor[Activity.sublevel - 1])
+                }
+            }
+        }
+
     }
 
 
@@ -201,8 +226,6 @@ Item {
             text: "OK"
             font.bold: true
             color: "white"
-            //            x: rootWindow.width / 1.1
-            //            y: rootWindow.height / 1.8
             font.pixelSize: rootWindow.height / 30
             anchors.centerIn: playLabel
         }
@@ -210,19 +233,20 @@ Item {
             anchors.fill: parent
             onClicked: {
 
-                for(var i = Activity.moveCount; i < Activity.moveCount + Activity.noOfBalls; i++) {
-                    if (Activity.bool == false) {
-                        greenAnswerBallsPlacement.children[i].opacity = 1.0;
-                    }
-                }
-                Activity.moveCount += Activity.noOfBalls;
-                //Activity.bool = !Activity.bool;
-                Activity.noOfBalls = 1;
-                numberOfBalls.text = 1;
-                Activity.machinePlay();
+                Activity.reSetup();
+//                for(var i = 0; i <  Activity.noOfBalls; i++) {
+//                    Activity.moveCount++;
 
-
-
+//                    if (Activity.moveCount <= (Activity.boardSize[Activity.sublevel-1] - 1)) {
+//                        greenAnswerBallsPlacement.children[Activity.moveCount].opacity = 1.0;
+//                    } else if (Activity.moveCount >= (Activity.boardSize[Activity.sublevel-1] - 1)) {
+//                        Activity.reSetup();
+//                        break;
+//                    }
+//                }
+//                Activity.noOfBalls = 1;
+//                numberOfBalls.text = 1;
+//                Activity.machinePlay();
 
             }
         }
@@ -230,6 +254,7 @@ Item {
 
     // Hidden Answer Balls
     Item {
+        id: answerBalls
         // All green balls placement
         Row {
 
@@ -263,33 +288,6 @@ Item {
                     opacity: 0.0
                 }
 
-            }
-        }
-    }
-
-
-    // Cover up cases
-    // All balls placement
-    Grid {
-        id: answerBallsCoverup
-        x: rootWindow.width / 2000
-        y: rootWindow.height / 1.4
-        rows: 1
-        columns: 15
-        Repeater {
-            model: 14
-            Image {
-                source: "resources/bargame/mask.png"
-                height: rootWindow.height / 9
-                width: rootWindow.width / 15
-            }
-        }
-        Repeater {
-            model: 1
-            Image {
-                source: "resources/bargame/mask_last.png"
-                height: rootWindow.height / 9
-                width: rootWindow.width / 15
             }
         }
     }
