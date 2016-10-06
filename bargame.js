@@ -30,8 +30,9 @@ var sampleBallsNo = [4, 6, 6]
 var tuxPositionFactor = [1.05, 1.8, 1.05]
 var ballSizeFactor = [0, 4, 4]
 var elementSizeFactor = [0, 4, 7]
+var noOfLables = [2, 3, 5]
 var moveCount = -1
-var level = 3
+var level = 1
 var maxlevel = 4
 var sublevel = 1
 var numberOfSublevel = 3
@@ -127,9 +128,11 @@ function machinePlay() {
     // Updates the game scene of level finish
     for ( var x = 1; x < value + 1; x++) {
         moveCount++;
+        console.log(moveCount);
         if (moveCount <= (boardSize[sublevel - 1] - 1)) {
             items.blueAnswerBallsPlacement.children[moveCount].opacity = 1.0;
-        } else if (moveCount >= (boardSize[sublevel-1] - 1)) {
+        }
+        if (moveCount >= (boardSize[sublevel-1] - 1)) {
             reSetup();
             break;
         }
@@ -139,33 +142,48 @@ function machinePlay() {
 }
 
 function reSetup() {
-    //sublevel ++;
+    console.log('hola')
+    sublevel++;
+    moveCount = -1;
+    noOfBalls = 1;
 
 
-    //if (sublevel == 2) {
-    items.startCase.model = boardSize[sublevel - 1] - 1;
-//    items.greenCase.height = items.rootWindow.height / 12
-//    items.greenCase.width = items.rootWindow.width / 18
+    if (sublevel > numberOfSublevel) {
+        sublevel = 1;
+        level++;
+        if (level > maxlevel) {
+            level = maxlevel;
+            sublevel = 1;
+        }
+    }
+
+    // Tux refresh
+    items.tux.source = "resources/bargame/tux" + level + ".png";
+    items.tux.y = items.rootWindow.height - items.rootWindow.height / 1.8;
+    items.tux.x = items.rootWindow.width - items.rootWindow.width / tuxPositionFactor[sublevel - 1];
+
+    // Blue sample balls refresh
+    items.blueBalls.columns = sampleBallsNo[sublevel - 1];
+
+    // Green sample balls refresh
+    items.greenBalls.columns = sampleBallsNo[sublevel - 1];
+
+    // Box setup refresh
+    items.boxes.columns = boardSize[sublevel-1];
+
+    // Mask setup refresh
+    items.masks.columns = boardSize[sublevel-1];
+
+    // Hiding all visible balls
+    items.greenAnswerBallsPlacement.columns = boardSize[sublevel-1]
+    items.blueAnswerBallsPlacement.columns = boardSize[sublevel-1]
+
+    // Resetting ball plate
 
 
-    //}
+
+    items.backgroundImage.source = "resources/bargame/school_bg" + level + ".jpg"
 
 
 }
 
-
-
-//    def play(self, value, human):
-//        for i in range(1, value + 1):
-//            last_played += 1
-//            if human:
-//                holes[last_played].isGreen()
-//            else:
-//                holes[last_played].isBlue()
-
-//            if last_played == boardSize[gcomprisBoard.sublevel - 1] - 1:
-//                gamelost(human)
-//                return
-
-//        if human:
-//            machine_play()
