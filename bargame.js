@@ -125,29 +125,43 @@ function machinePlay() {
         var value = randomNumber(numberBalls[sublevel - 1][0], numberBalls[sublevel - 1][1]);
     }
 
-    // Updates the game scene of level finish
-    for ( var x = 1; x < value + 1; x++) {
-        moveCount++;
-        console.log(moveCount);
-        if (moveCount <= (boardSize[sublevel - 1] - 1)) {
-            items.blueAnswerBallsPlacement.children[moveCount].opacity = 1.0;
-        }
-        if (moveCount >= (boardSize[sublevel-1] - 1)) {
-            reSetup();
-            break;
-        }
+    play(false, value);
 
-       // console.log(moveCount);
-    }
+
 }
 
+function play(human, value) {
+
+    for ( var x = 0; x < value ; x++) {
+        moveCount++;
+        if (moveCount <= (boardSize[sublevel - 1] - 1)) {
+            if (human == true) {
+                items.greenAnswerBallsPlacement.children[moveCount].opacity = 1.0;
+            } else {
+                items.blueAnswerBallsPlacement.children[moveCount].opacity = 1.0;
+            }
+        }
+        if (moveCount == (boardSize[sublevel - 1] - 1)) {
+            reSetup();
+            return;
+        }
+    }
+    if (human == true) {
+        machinePlay();
+    }
+
+}
+
+
+
+
+
 function reSetup() {
-    console.log('hola')
-    sublevel++;
+
+
     moveCount = -1;
-    noOfBalls = 1;
-
-
+    sublevel++;
+    items.numberOfBalls.text = 1;
     if (sublevel > numberOfSublevel) {
         sublevel = 1;
         level++;

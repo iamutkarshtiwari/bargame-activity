@@ -57,6 +57,7 @@ Item {
 
         property alias boxes: boxes
         property alias masks: masks
+        property alias numberOfBalls: numberOfBalls
 
 
 
@@ -164,7 +165,7 @@ Item {
 
                 id: greenAnswerBallsPlacement
                 x: rootWindow.width / 2000
-                y: rootWindow.height / 1.4
+                y: rootWindow.height / 1.6
                 columns: 15
                 rows: 1
 
@@ -244,24 +245,8 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-
-                for(var i = 0; i <  Activity.noOfBalls; i++) {
-                    Activity.moveCount++;
-                    console.log(Activity.moveCount);
-                    if (Activity.moveCount <= (Activity.boardSize[Activity.sublevel-1] - 1)) {
-                        greenAnswerBallsPlacement.children[Activity.moveCount].opacity = 1.0;
-
-                    }
-                    if (Activity.moveCount >= (Activity.boardSize[Activity.sublevel-1] - 1)) {
-                        Activity.reSetup();
-                        break;
-                    }
+                Activity.play(true, numberOfBalls.text );
                 }
-                Activity.noOfBalls = 1;
-                numberOfBalls.text = 1;
-                Activity.machinePlay();
-
-            }
         }
     }
 
@@ -281,7 +266,6 @@ Item {
             anchors.fill: parent
             onClicked: {
                 parent.source = "resources/bargame/enumerate_answer_focus.png";
-                //Activity.noOfBalls + = 1;
                 Activity.noOfBalls ++;
                 if (Activity.noOfBalls > Activity.numberBalls[Activity.sublevel - 1 ][1]) {
                     Activity.noOfBalls = Activity.numberBalls[Activity.sublevel - 1 ][0];
