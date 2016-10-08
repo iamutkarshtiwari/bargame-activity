@@ -3,7 +3,7 @@
  * Copyright (C) 2016 UTKARSH TIWARI <iamutkarshtiwari@kde.org >
  *
  * Authors:
- *   Bruno Coudoin (bruno.coudoin@gcompris.net) (GTK+ version)
+ *   Yves Combe (GTK+ version)
  *   UTKARSH TIWARI <iamutkarshtiwari@kde.org > (Qt Quick port)
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -42,31 +42,42 @@ var currentLevel = 0
 var numberOfLevel = 4
 var items
 var noOfBalls = 1
+var tuxActive = true;
+
+var url= "qrc:/gcompris/src/activities/bargame/resource/";
 
 function start(items_) {
     items = items_
-    currentLevel = 0
-    //initLevel()
+    currentLevel = 1
+    initLevel()
 }
 
 function stop() {
 }
 
 function initLevel() {
-    items.bar.level = currentLevel + 1
+    items.bar.level = currentLevel
 }
 
 function nextLevel() {
-    if(numberOfLevel <= ++currentLevel ) {
-        currentLevel = 0
+    level++;
+    if (level > 4) {
+        level = 1;
     }
+    currentLevel = level
+    reSetup();
     initLevel();
 }
 
 function previousLevel() {
-    if(--currentLevel < 0) {
-        currentLevel = numberOfLevel - 1
+    level--;
+    if (level < 1) {
+        level = 4;
     }
+    currentLevel = level;
+    sublevel = 1;
+
+    reSetup(true);
     initLevel();
 }
 
@@ -99,7 +110,6 @@ function calculateWinPlaces() {
 }
 
 function machinePlay() {
-
     function accessible(x) {
         if (listWin.indexOf(x + moveCount) >= 0) {
             return true;
@@ -126,12 +136,9 @@ function machinePlay() {
     }
 
     play(false, value);
-
-
 }
 
 function play(human, value) {
-
     for ( var x = 0; x < value ; x++) {
         moveCount++;
         if (moveCount <= (boardSize[sublevel - 1] - 1)) {
@@ -142,39 +149,44 @@ function play(human, value) {
             }
         }
         if (moveCount == (boardSize[sublevel - 1] - 1)) {
-            reSetup();
+            // Sublevel increment
+            sublevel++;
+            if (sublevel > numberOfSublevel) {
+                sublevel = 1;
+                level++;
+                if (level > maxlevel) {
+                    level = maxlevel;
+                    sublevel = 1;
+                }
+                currentLevel = level;
+            }
+            if (human == false) {
+                items.bonus.good("flower");
+            } else {
+                items.bonus.bad("flower");
+            }
             return;
         }
     }
     if (human == true) {
         machinePlay();
     }
-
 }
 
-
-
-
-
+// Refreshes the scene
 function reSetup() {
-
-
+    items.tuxArea.enabled = true;
+    items.tuxArea.hoverEnabled = true;
     moveCount = -1;
-    sublevel++;
     items.numberOfBalls.text = 1;
-    if (sublevel > numberOfSublevel) {
-        sublevel = 1;
-        level++;
-        if (level > maxlevel) {
-            level = maxlevel;
-            sublevel = 1;
-        }
-    }
+    noOfBalls = 1;
+
+    initLevel();
 
     // Tux refresh
-    items.tux.source = "resources/bargame/tux" + level + ".png";
-    items.tux.y = items.rootWindow.height - items.rootWindow.height / 1.8;
-    items.tux.x = items.rootWindow.width - items.rootWindow.width / tuxPositionFactor[sublevel - 1];
+    items.tux.source = url + "tux" + level + ".svg";
+    items.tuxRect.y = items.rootWindow.height - items.rootWindow.height / 1.8;
+    items.tuxRect.x = items.rootWindow.width - items.rootWindow.width / tuxPositionFactor[sublevel - 1];
 
     // Blue sample balls refresh
     items.blueBalls.columns = sampleBallsNo[sublevel - 1];
@@ -189,15 +201,14 @@ function reSetup() {
     items.masks.columns = boardSize[sublevel-1];
 
     // Hiding all visible balls
+    for (var x = 0; x < items.blueAnswerBallsPlacement.columns; x++) {
+        items.blueAnswerBallsPlacement.children[x].opacity = 0.0;
+        items.greenAnswerBallsPlacement.children[x].opacity = 0.0;
+    }
     items.greenAnswerBallsPlacement.columns = boardSize[sublevel-1]
     items.blueAnswerBallsPlacement.columns = boardSize[sublevel-1]
 
     // Resetting ball plate
-
-
-
-    items.backgroundImage.source = "resources/bargame/school_bg" + level + ".jpg"
-
-
+    items.backgroundImage.source = url + "school_bg" + level + ".svg"
 }
 
